@@ -2,6 +2,7 @@ from ClassPart4 import *
 from back import back
 from Rua import ReURL
 from Realuser import Realurl
+from commonfun import http
 from url.check import *
 def fitref(refs):
     frefs={}
@@ -125,7 +126,7 @@ def DealUa2(uas,results):
         #print ua
         for row in results:
             try:
-                fnames = row[0].encode("utf-8")
+                fnames=row[0].encode("utf-8")
                 fd = fnames.split("|")
                 times = fd[0].strip()
                 url = row[1].encode("utf-8")
@@ -251,30 +252,30 @@ def dealurl2(results):
             surl = url.replace('\t', '').replace('\n', ';;')
             # print surl1
             Get, Host, Ref, UAgent, Cookie = rexurlg(surl)
-            if back(Get)!=0:
-                if len(Get) != 0:
-                    if len(Ref) == 0:
-                            # print Get
+            if len(Get)!=0:
+                if back(Get)!=0:
+                    if http(Get)!=0:
+                        if len(Ref) ==0:
                             if Get not in get01s:
-                                # print len(Get)
                                 get01s[Get] = 1
                             else:
-                                get01s[Get] = get01s[Get] + 1
-                    else:
-                            # if UAgent==Realua:
-                            # print fname
-                        Ref = Ref.strip()
-                        getref[Get]=Ref
-                        if Ref not in refs:
-                            refs[Ref]=1
+                                 get01s[Get] = get01s[Get] + 1
                         else:
-                            refs[Ref]=refs[Ref] + 1
+                            Ref = Ref.strip()
+                            getref[Get]=Ref
+                            if Ref not in refs:
+                                refs[Ref]=1
+                            else:
+                                refs[Ref]=refs[Ref] +1
+                    else:
+                        continue
+
                 else:
-                    backurl[times]=Get
+                    if Ref not in backref:
+                        backref.append(Ref)
 
             else:
-                if Ref not in backref:
-                    backref.append(Ref)
+                continue
 
         except:
             continue
